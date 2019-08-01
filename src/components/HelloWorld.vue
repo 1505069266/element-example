@@ -1,40 +1,127 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-pwa" target="_blank" rel="noopener">pwa</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+   <van-button type="default">默认按钮</van-button>
+   <van-button type="primary">主要按钮</van-button>
+    <van-button type="info">信息按钮</van-button>
+    <van-button type="warning">警告按钮</van-button>
+    <van-button type="danger">危险按钮</van-button>
+
+
+  <van-contact-list
+    :list="list"
+    @add="onAdd"
+    @edit="onEdit"
+  />
+<!-- 联系人编辑 -->
+<van-popup v-model="showEdit" position="bottom">
+  <van-contact-edit
+    :contact-info="editingContact"
+    :is-edit="isEdit"
+    @save="onSave"
+    @delete="onDelete"
+  />
+</van-popup>
   </div>
 </template>
 
 <script>
+import {Button} from 'vant'
+import axios from 'axios'
+import { ContactCard, ContactList, ContactEdit , Toast,Popup} from 'vant';
 export default {
+  components: {
+    [Button.name]: Button,
+    [ContactList.name]: ContactList,
+    [ContactCard.name]:ContactCard,
+    [ContactEdit.name]:ContactEdit,
+    [Popup.name]: Popup
+  },
+  data(){
+    return{
+      list:[
+        {
+          id:1,
+          name: 'zhuxiaole',
+          tel: '17855868561'
+        }
+      ],
+      instance: null,//axios实例
+      showEdit: false,//弹出层显示隐藏
+      editingContact: {},//正在编辑的联系人
+      isEdit: false,//
+    }
+  },
   name: 'HelloWorld',
   props: {
     msg: String
+  },
+  created(){
+    this.instance = axios.create({
+      baseURL: 'http://localhost:9000/api',
+      timeout: 1000,
+
+    })
+    this.getlist()
+  },
+  methods:{
+    // 获取联系人列表
+    getlist(){
+this.instance.get('/contactlist').then(res=>{
+      this.list = res.data.data
+    }).catch(err=>{
+      Toast('请求失败,稍后重试')
+    })
+    },
+    onAdd(){ //添加联系人
+      this.showEdit = true
+      this.isEdit = false
+    },
+    onEdit(info){ //编辑联系人
+      this.showEdit = true
+      this.isEdit = true
+      this.editingContact = info
+    },
+    onSave(info){//保存联系人
+      if(this.isEdit){
+        //编辑保存
+        this.instance.put('/contact/edit',info).then(res=>{
+          console.log(res);
+          if(res.data.code === 200){
+            Toast('编辑成功')
+            this.showEdit = false
+            this.getlist()
+          }
+        }).catch(()=>{
+          Toast('请求失败,稍后重试')
+        })
+      }else{
+        //新建保存
+        this.instance.post('/contact/new/json',info).then(res=>{
+          if(res.data.code === 200){
+            Toast('新建成功')
+          this.showEdit = false
+          this.getlist()
+          }
+          
+        }).catch(()=>{
+                Toast('请求失败,稍后重试')
+        })
+      }
+    },
+    onDelete(info){//删除联系人
+      this.instance.delete('/contact',{
+        params:{
+        id: info.id
+      }}).then(res=>{
+        if(res.data.code === 200){
+          Toast('删除成功')
+          this.showEdit = false
+          this.getlist()
+        }
+      }).catch(()=>{
+        Toast('请求失败,请稍后重试')
+      })
+    }
   }
 }
 </script>
