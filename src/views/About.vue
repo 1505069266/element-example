@@ -11,9 +11,34 @@
       <div slot="one">我是第一个具名插槽</div>
       <div slot="two">我是第二个具名插槽</div>
     </slots-chacao>
+    <!-- 淡入 -->
+      <transition name="van-fade">
+        <div v-show="visible">Fade</div>
+      </transition>
+
+      <!-- 上滑进入 -->
+      <transition name="van-slide-up">
+        <div v-show="visible">Slide Up</div>
+      </transition>
+
+      <!-- 下滑进入 -->
+      <transition name="van-slide-down">
+        <div v-show="visible">Slide Down</div>
+      </transition>
+
+      <!-- 左滑进入 -->
+      <transition name="van-slide-left">
+        <div v-show="visible">Slide Left</div>
+      </transition>
+
+      <!-- 右滑进入 -->
+      <transition name="van-slide-right">
+        <div v-show="visible">Slide Right</div>
+      </transition>
   </div>
 </template>
 <script>
+import { Button } from 'vant';
 import init from '@/minix/initData'
 import slots from './slot'
 import slotsChacao from './slotschacao'

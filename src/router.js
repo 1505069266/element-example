@@ -29,6 +29,16 @@ export default new Router({
       path: '/axios',
       name: 'axios',
       component: () => import('./views/axios.vue') //这是路由的懒加载写法
+    },
+    {
+      path: '/joyoungComponent',
+      name: 'joyoungComponent',
+      component: () => import('./views/joyoungComponent.vue') //这是路由的懒加载写法
+    },
+    {
+      path: '/cell',
+      name: 'cell',
+      component: () => import('./views/cell.vue') //这是路由的懒加载写法
     }
   ]
 })

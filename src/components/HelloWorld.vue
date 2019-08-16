@@ -1,10 +1,10 @@
 <template>
   <div class="hello">
-   <van-button type="default">默认按钮</van-button>
-   <van-button type="primary">主要按钮</van-button>
-    <van-button type="info">信息按钮</van-button>
-    <van-button type="warning">警告按钮</van-button>
-    <van-button type="danger">危险按钮</van-button>
+   <van-button plain type="default">默认按钮</van-button>
+   <van-button plain hairline type="primary">主要按钮</van-button>
+    <van-button square type="info">信息按钮</van-button>
+    <van-button icon="star-o" round type="warning">警告按钮</van-button>
+    <van-button :loading="load" type="danger" loading-text="加载中..."  loading-type="spinner">危险按钮</van-button>
 
 
   <van-contact-list
@@ -49,6 +49,7 @@ export default {
       showEdit: false,//弹出层显示隐藏
       editingContact: {},//正在编辑的联系人
       isEdit: false,//
+      load: true
     }
   },
   name: 'HelloWorld',

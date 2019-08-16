@@ -4,7 +4,9 @@
       <router-link to="/">Home</router-link> |
       <router-link to="/about">About</router-link> |
       <router-link to="/content">Content</router-link> |
-      <router-link to='/axios'>axios</router-link>
+      <router-link to='/axios'>axios</router-link> |
+      <router-link to='/joyoungComponent'>joyoungComponent</router-link> |
+      <router-link to='/cell'>cell</router-link>
     </div>
     <router-view/>
   </div>
