@@ -9,25 +9,26 @@
             <el-tabs v-model="activeName" type="card" @tab-click="handleClick" >
             <el-tab-pane label="供应商机构" name="first">
                 <div class="el-tabs__content">
-                <p>供应商机构</p>
-                <p>供应商机构</p>
-                <p>供应商机构</p>
-                <p>供应商机构</p>
-                <p>供应商机构</p>
-                <p>供应商机构</p>
-                <p>供应商机构</p>
-                <p>供应商机构</p>
-                <p>供应商机构</p>
-                <p>供应商机构</p>
-                <p>供应商机构</p>
+                  <el-tree
+                    :props="props"
+                    :load="loadNode"
+                    lazy
+                    show-checkbox
+                    @check-change="handleCheckChange">
+                  </el-tree>
                 </div>
             </el-tab-pane>
             <el-tab-pane label="九阳" name="second">
                 <div class="el-tabs__content">
-                <p>九阳</p>
-                <p>九阳</p>
-                <p>九阳</p>
-                <p>九阳</p>
+                  <div class="el-tabs__content">
+                    <el-tree
+                      :props="props"
+                      :load="loadNode"
+                      lazy
+                      show-checkbox
+                      @check-change="handleCheckChange">
+                    </el-tree>
+                  </div>
                 </div>
             </el-tab-pane>
             <el-tab-pane label="群组列表" name="third">
@@ -93,7 +94,12 @@ export default {
         renderFunc(h, option) {
           return <span>{ option.key } - { option.label }</span>;
         },
-        activeName: 'first'
+        activeName: 'first',
+        props: {
+          label: 'name',
+          children: 'zones'
+        },
+        count: 1
     };
   },
   created() {
@@ -110,7 +116,7 @@ export default {
         console.log(value, direction, movedKeys);
       },
       handleClick(tab, event) {
-        console.log(tab, event);
+        // console.log(tab, event);
       },
       widthfunction(){
           setTimeout(()=>{
@@ -119,6 +125,42 @@ export default {
             this.$refs.content.style.width = a + b + 10 + "px"
           },0)
          
+      },
+      handleCheckChange(data, checked, indeterminate) {
+        console.log(data, checked, indeterminate);
+      },
+      handleNodeClick(data) {
+
+      },
+      loadNode(node, resolve) {
+        if (node.level === 0) {
+          return resolve([{ name: 'region1' }, { name: 'region2' }]);
+        }
+        if (node.level > 3) return resolve([]);
+
+        var hasChild;
+        if (node.data.name === 'region1') {
+          hasChild = true;
+        } else if (node.data.name === 'region2') {
+          hasChild = false;
+        } else {
+          hasChild = Math.random() > 0.5;
+        }
+
+        setTimeout(() => {
+          var data;
+          if (hasChild) {
+            data = [{
+              name: 'zone' + this.count++
+            }, {
+              name: 'zone' + this.count++
+            }];
+          } else {
+            data = [];
+          }
+          console.log(data);
+          resolve(data);
+        }, 500);
       }
   },
   filter: {},
@@ -136,7 +178,7 @@ export default {
     border:1px solid #E4E7ED;
     border-radius:5px;
     position: relative;
-    padding-bottom:50px;
+    padding-bottom:60px;
 }
 .tabs-cont{
     border-right:1px solid #E4E7ED;
@@ -150,17 +192,20 @@ export default {
     position: absolute;
     bottom:0px;
     width: 100%;
-    height: 50px;
+    height: 60px;
+    box-sizing: border-box;
+    padding-right: 20px;
 }
 .bottom>div>button{
-    width: 60px;
-    height: 30px;
+    width: 70px;
+    height: 40px;
     border:1px solid #E4E7ED;
     border-radius: 2px;
-    background: white
+    background: white;
+    margin-left:15px;
 }
 .bottom>div{
-    width: 130px;
+    width: 180px;
     display: flex;
     justify-content: space-around;
     float: right;
